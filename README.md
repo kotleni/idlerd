@@ -12,8 +12,8 @@ You need to run `idlerd` in the background. For example, in `Sway`, you can add 
 ```sh
 exec idlerd \
   --timeout 400 "swaylock" \
-  --timeout 900 "swaymsg 'output * power off'"
-  --timeout 1400 "systemctl sleep"
+  --timeout 900 "swaymsg 'output * power off'" \
+  --timeout 1400 "systemctl sleep" \
   --resume "swaymsg 'output * power on'"
 ```
 
