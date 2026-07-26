@@ -1,4 +1,3 @@
-use crate::command::run_command;
 use wayland_client::{
     protocol::{wl_registry, wl_seat::WlSeat},
     Connection, Dispatch, QueueHandle,
@@ -8,10 +7,14 @@ use wayland_protocols::ext::idle_notify::v1::client::{
     ext_idle_notifier_v1::ExtIdleNotifierV1,
 };
 
+pub type IdleCallback = Box<dyn FnMut(&str)>;
+pub type ResumeCallback = Box<dyn FnMut()>;
+
 pub struct State {
     pub notifier: Option<ExtIdleNotifierV1>,
     pub seat: Option<WlSeat>,
-    pub resume_cmd: Option<String>,
+    pub on_idle: Option<IdleCallback>,
+    pub on_resume: Option<ResumeCallback>,
 }
 
 impl Dispatch<wl_registry::WlRegistry, ()> for State {
@@ -81,13 +84,14 @@ impl Dispatch<ExtIdleNotificationV1, String> for State {
         match event {
             ext_idle_notification_v1::Event::Idled => {
                 println!("[event] IDLED -> running: {}", cmd);
-                run_command(cmd.clone());
+                if let Some(ref mut cb) = state.on_idle {
+                    cb(cmd);
+                }
             }
             ext_idle_notification_v1::Event::Resumed => {
                 println!("[event] RESUMED (rule: `{}`)", cmd);
-                if let Some(ref resume) = state.resume_cmd {
-                    println!("[event] RESUMED -> running: {}", resume);
-                    run_command(resume.clone());
+                if let Some(ref mut cb) = state.on_resume {
+                    cb();
                 }
             }
             _ => {}

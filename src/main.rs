@@ -3,6 +3,7 @@ mod command;
 mod wayland;
 
 use args::Args;
+use command::run_command;
 use wayland::State;
 use wayland_client::{Connection, EventQueue};
 
@@ -29,10 +30,19 @@ fn main() {
 
     let _registry = display.get_registry(&qh, ());
 
+    let resume_cmd = args.resume_cmd;
     let mut state = State {
         notifier: None,
         seat: None,
-        resume_cmd: args.resume_cmd,
+        on_idle: Some(Box::new(|cmd| {
+            run_command(cmd.to_owned());
+        })),
+        on_resume: resume_cmd.map(|cmd| {
+            Box::new(move || {
+                println!("[event] RESUMED -> running: {}", cmd);
+                run_command(cmd.clone());
+            }) as Box<dyn FnMut()>
+        }),
     };
 
     event_queue.roundtrip(&mut state).unwrap();
