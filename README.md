@@ -56,3 +56,10 @@ This installs the `idlerd` binary to `/usr/local/bin/` by default. You can chang
 ```bash
 cmake --install build --prefix ~/.local
 ```
+
+Or install it from the <a href="https://aur.archlinux.org/packages/idlerd-git>AUR</a>:
+
+```sh
+$ yay -S panium-git
+```
+
