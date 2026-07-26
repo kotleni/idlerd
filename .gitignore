@@ -1,1 +1,7 @@
-/target
+build/
+
+protocol/idle-protocol.c
+protocol/idle-protocol.h
+
+.clangd
+compile_commands.json

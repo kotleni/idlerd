@@ -1,9 +1,0 @@
-[package]
-name = "idlerd"
-version = "1.0.0"
-edition = "2024"
-
-[dependencies]
-clap = { version = "4", features = ["derive"] }
-wayland-client = "0.31"
-wayland-protocols = { version = "0.32", features = ["client", "staging"] }
