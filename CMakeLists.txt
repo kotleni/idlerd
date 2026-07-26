@@ -43,6 +43,10 @@ add_custom_command(
 
 add_executable(idlerd
     src/main.c
+    src/command.c
+    src/gamepad.c
+    src/inhibit.c
+    src/idle.c
     ${PROTOCOL_DIR}/idle-protocol.c
     ${PROTOCOL_DIR}/idle-inhibit-protocol.c
 )
@@ -50,6 +54,7 @@ add_executable(idlerd
 target_include_directories(idlerd PRIVATE
     ${WAYLAND_CLIENT_INCLUDE_DIRS}
     ${PROTOCOL_DIR}
+    src
 )
 
 target_link_libraries(idlerd ${WAYLAND_CLIENT_LIBRARIES})
