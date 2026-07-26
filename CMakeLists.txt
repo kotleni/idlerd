@@ -20,6 +20,11 @@ if(NOT EXISTS "${IDLE_PROTOCOL_XML}")
     message(FATAL_ERROR "ext-idle-notify-v1.xml not found at ${IDLE_PROTOCOL_XML}")
 endif()
 
+set(IDLE_INHIBIT_XML ${WAYLAND_PROTOCOLS_DIR}/unstable/idle-inhibit/idle-inhibit-unstable-v1.xml)
+if(NOT EXISTS "${IDLE_INHIBIT_XML}")
+    message(FATAL_ERROR "idle-inhibit-unstable-v1.xml not found at ${IDLE_INHIBIT_XML}")
+endif()
+
 add_custom_command(
     OUTPUT ${PROTOCOL_DIR}/idle-protocol.c ${PROTOCOL_DIR}/idle-protocol.h
     COMMAND ${WAYLAND_SCANNER} client-header ${IDLE_PROTOCOL_XML} ${PROTOCOL_DIR}/idle-protocol.h
@@ -28,9 +33,18 @@ add_custom_command(
     COMMENT "Generating Wayland protocol bindings for ext-idle-notify-v1"
 )
 
+add_custom_command(
+    OUTPUT ${PROTOCOL_DIR}/idle-inhibit-protocol.c ${PROTOCOL_DIR}/idle-inhibit-protocol.h
+    COMMAND ${WAYLAND_SCANNER} client-header ${IDLE_INHIBIT_XML} ${PROTOCOL_DIR}/idle-inhibit-protocol.h
+    COMMAND ${WAYLAND_SCANNER} private-code ${IDLE_INHIBIT_XML} ${PROTOCOL_DIR}/idle-inhibit-protocol.c
+    DEPENDS ${IDLE_INHIBIT_XML}
+    COMMENT "Generating Wayland protocol bindings for idle-inhibit-unstable-v1"
+)
+
 add_executable(idlerd
     src/main.c
     ${PROTOCOL_DIR}/idle-protocol.c
+    ${PROTOCOL_DIR}/idle-inhibit-protocol.c
 )
 
 target_include_directories(idlerd PRIVATE
